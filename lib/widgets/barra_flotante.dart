@@ -8,11 +8,13 @@ class BarraFlotante extends StatelessWidget {
   const BarraFlotante({
     super.key,
     required this.pestanaActual,
+    required this.menuAbierto, // NUEVO: ¿el menú del + está abierto?
     required this.alElegir,
     required this.alCrear,
   });
 
   final int pestanaActual; // 0 = Fotos, 1 = Colecciones
+  final bool menuAbierto;
   final ValueChanged<int> alElegir;
   final VoidCallback alCrear;
 
@@ -20,20 +22,20 @@ class BarraFlotante extends StatelessWidget {
   Widget build(BuildContext context) {
     return Cristal(
       radio: 30,
-      padding: const EdgeInsets.all(6), // antes 10: menos relleno = barra más delgada
+      padding: const EdgeInsets.all(6),
       child: Row(
         children: [
           Expanded(
             child: _Pestana(
-              icono: Icons.image_outlined, // contorno cuando está inactiva
-              iconoActivo: Icons.image_rounded, // relleno cuando está activa
+              icono: Icons.image_outlined,
+              iconoActivo: Icons.image_rounded,
               texto: 'Fotos',
               activa: pestanaActual == 0,
               alTocar: () => alElegir(0),
             ),
           ),
           const SizedBox(width: 4),
-          _BotonCrear(alTocar: alCrear),
+          _BotonCrear(alTocar: alCrear, abierto: menuAbierto),
           const SizedBox(width: 4),
           Expanded(
             child: _Pestana(
@@ -120,15 +122,16 @@ class _Pestana extends StatelessWidget {
 }
 
 class _BotonCrear extends StatelessWidget {
-  const _BotonCrear({required this.alTocar});
+  const _BotonCrear({required this.alTocar, required this.abierto});
 
   final VoidCallback alTocar;
+  final bool abierto; // true = el menú está abierto
 
   @override
   Widget build(BuildContext context) {
     return Pulsable(
       alTocar: alTocar,
-      escala: 0.85, // el "+" se encoge más: se siente más marcado
+      escala: 0.85,
       child: Container(
         width: 44,
         height: 44,
@@ -136,7 +139,14 @@ class _BotonCrear extends StatelessWidget {
           color: colorAcento,
           shape: BoxShape.circle,
         ),
-        child: const Icon(Icons.add_rounded, color: Colors.white, size: 26),
+        // AnimatedRotation gira su contenido con animación.
+        // 0.125 vueltas = 45 grados: un "+" girado 45° se ve como una "×"
+        child: AnimatedRotation(
+          turns: abierto ? 0.125 : 0,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutBack, // con un pequeño rebote al girar
+          child: const Icon(Icons.add_rounded, color: Colors.white, size: 26),
+        ),
       ),
     );
   }

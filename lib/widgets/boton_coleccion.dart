@@ -4,7 +4,7 @@ import '../tema.dart';
 import 'cristal.dart';
 import 'pulsable.dart';
 
-// Un recuadro de la cuadrícula de Colecciones
+// Un recuadro de la tira de Colecciones
 class BotonColeccion extends StatelessWidget {
   const BotonColeccion({
     super.key,
@@ -46,12 +46,19 @@ class BotonColeccion extends StatelessWidget {
               ),
               child: Icon(icono, color: color, size: 24),
             ),
-            Text(
-              titulo,
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-                color: paleta.texto,
+
+            // FittedBox encoge el texto SOLO si no cabe en el recuadro,
+            // así palabras largas como "Destacados" nunca se cortan.
+            FittedBox(
+              fit: BoxFit.scaleDown, // solo reduce, nunca agranda
+              alignment: Alignment.centerLeft, // si se encoge, se queda pegado a la izquierda
+              child: Text(
+                titulo,
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: paleta.texto,
+                ),
               ),
             ),
           ],
